@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+
+	<insert id="addUser" parameterType="uvo">
+		insert into uuser
+		values(uuser_seq.nextVal,#{email},#{pwd},#{name},#{address},#{addressdo},#{pnum},0)
+	</insert>
+	
+	<select id="loginChk" parameterType="uvo" resultType="uvo">
+	select count(*) cnt from uuser where email=#{email} and pwd=#{pwd}
+	</select>
+	
+	<select id="addSession" parameterType="uvo" resultType="uvo">
+	select hostchk, name, no from uuser where email=#{email} and pwd=#{pwd}
+	</select>
+	
+	<select id="idchk" resultType="int" parameterType="String">
+		select count(*) cnt from uuser where email=#{email}
+	</select>
+   
+   <update id="updateHostChk" parameterType="int">
+ 		update uuser set hostchk = 1 where no = #{no}
+ 	</update>
+ 	
+ 	<select id="selectHostChk" resultType="int">
+   	select hostchk from uuser where no = #{no}
+   </select>
+</mapper>

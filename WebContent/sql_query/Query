@@ -1,0 +1,142 @@
+create table uuser(
+no number constraint user_no_pk primary key,
+email varchar2(50),
+pwd varchar2(30),
+name varchar2(30),
+address varchar2(100),
+addressdo varchar2(100),
+pnum varchar2(50),
+hostchk number,
+CONSTRAINT user_email_uq UNIQUE(email));
+
+
+create sequence uuser_seq
+increment by 1
+start with 1 ;
+
+
+
+create table host (
+hno number constraint host_hno_pk primary key,
+hname varchar2(50),
+haddress varchar2(100),
+hpernum varchar2(20),
+hrnum varchar2(20),
+htnum varchar2(20),
+htype varchar2(30),
+hprice varchar2(50),
+hinfo varchar2(500),
+wishcnt number,
+constraint host_hno_fk foreign key(hno)
+references uuser(no)
+);
+
+create sequence host_seq
+increment by 1
+start with 1 ;
+
+
+
+create table reservation(
+resno number constraint reservation_resno_pk primary key,
+uno number,
+hno number,
+chkin varchar2(50),
+chkout varchar2(50),
+pernum number,
+resdate date, 
+constraint reservation_uno_fk foreign key(uno)
+references uuser(no),
+constraint reservation_hno_fk foreign key(hno)
+references host(hno)
+);
+
+create sequence reservation_seq
+increment by 1
+start with 1 ;
+
+
+create table qnaboard(
+qno number constraint qnaboard_qno_pk primary key,
+bsub varchar2(50),
+id varchar2(50),
+content varchar2(200),
+bdate date,
+constraint qnaboard_id_fk foreign key(id)
+references uuser(email)
+);
+
+create sequence qnaboard_seq
+increment by 1
+start with 1 ;
+
+
+
+
+create table review (
+rno number constraint review_rno_pk primary key,
+id varchar2(50),
+recontent varchar2(200),
+point number,
+rdate date,
+constraint review_id_fk foreign key(id)
+references uuser(email)
+);
+
+create sequence review_seq
+increment by 1
+start with 1 ;
+
+
+commit;
+
+create table wishlist(
+uno number,
+hno number 
+);
+
+alter table wishlist add constraint wishlist_uno_fk foreign key (uno) references uuser (no) on delete cascade;
+alter table wishlist add constraint wishlist_hno_fk foreign key (hno) references host (hno)on delete cascade;
+
+--파일 업로더 
+
+create table hostimg_sub(
+upno number constraint updemo_sub_nn not null,
+img1 varchar2(100),
+mdate date,
+constraint updemo_sub_fk FOREIGN key(upno)
+references host(hno) on delete cascade);
+
+create sequence hostimg_sub_sub_seq
+increment by 1
+start with 1;
+
+
+-- 게시판 댓글달기 table
+
+create table bcomment(
+no number primary key,
+bcno number,
+id varchar2(30),
+comm varchar2(450),
+cdate date,
+constraint bcomment_upno_fk foreign key(bcno)
+references qnaboard(qno));
+
+create sequence bcomment_seq
+increment by 1
+start with 1;
+
+
+drop table uuser;
+drop sequence uuser_seq;
+drop table host;
+drop sequence host_seq;
+drop table reservation;
+drop sequence reservation_seq;
+drop table qnaboard;
+drop sequence qnaboard_seq;
+drop table review;
+drop sequence review_seq;
+
+

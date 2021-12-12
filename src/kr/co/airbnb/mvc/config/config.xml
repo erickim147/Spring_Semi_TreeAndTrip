@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="kr.co.airbnb.mvc.dto.UserVO" alias="uvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.HostVO" alias="hvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.HostSubVO"
+			alias="hsvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.ResVO" alias="rvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.WishVO" alias="wvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.ResTotalVO"
+			alias="rtvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.PageVO" alias="pvo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.ReviewVO" alias="revo" />
+		<typeAlias type="kr.co.airbnb.mvc.dto.AopVO" alias="aopvo" />
+	</typeAliases>
+</configuration>

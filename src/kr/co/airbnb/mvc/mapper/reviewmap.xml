@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="review">
+ 
+	<insert id="add" parameterType="revo">
+		insert into review
+		values(#{uno},#{recontent},sysdate,#{hno})
+	</insert>
+
+
+	<select id="roomReviewList" resultType="revo" parameterType="int">
+		select
+		r.uno,r.recontent,r.rdate,u.name,r.hno from review r , uuser u
+		where r.uno=u.no and r.hno=#{hno}
+	</select>
+	
+	<select id="userReviewList" resultType="revo" parameterType="int">
+		select
+		r.uno,r.recontent,r.rdate,u.name,r.hno from review r, uuser u
+		where r.uno=u.no and r.uno=#{uno}
+	</select>
+	
+	
+	<delete id="delete" parameterType="revo">
+		delete from review where uno = #{uno} and hno = #{hno}
+
+	</delete>
+ 
+ </mapper>

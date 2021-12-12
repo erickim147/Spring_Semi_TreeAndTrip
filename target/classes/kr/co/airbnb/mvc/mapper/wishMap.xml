@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wish">
+
+   <insert id="add" parameterType="wvo">
+   insert into wishlist
+      values(#{uno},#{hno})
+   </insert>
+   
+   <delete id="delete" parameterType="wvo">
+   
+   delete from wishlist where uno=#{uno} and hno=#{hno}
+   
+   </delete>
+
+   <select id="list" parameterType="int" resultType="hvo">
+  select h.hno,h.hname,h.haddress,h.hpernum,h.hrnum,h.htnum,h.htype,h.hprice,h.hinfo, hs.img1 from wishlist w join host h on w.hno=h.hno join hostimg_sub hs on h.hno=hs.upno where w.uno=#{uno} and img1 like '1%'
+   </select>
+
+	<select id="wishchk" resultType="int" parameterType="wvo">
+		select
+		count(*) cnt from wishlist where uno=#{uno} and hno=#{hno}
+	</select>
+	
+	      <select id="hostwishlist" parameterType="int" resultType="uvo">
+  select u.no,u.name,u.address,u.addressdo from wishlist w join uuser u on w.uno=u.no where w.hno=#{hno}
+   </select>
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="res">
+
+	<insert id="add" parameterType="rvo">
+		insert into reservation
+		values(reservation_seq.nextVal,#{uno},#{hno},#{chkin},#{chkout},#{pernum},sysdate,#{rprice})
+
+	</insert>
+
+
+
+	<select id="resRno" parameterType="rvo" resultType="String">
+		select resno
+		from reservation where hno=#{hno}
+
+	</select>
+
+	<select id="resDate" parameterType="rvo" resultType="String">
+	    <![CDATA[
+select to_char(TO_DATE(ymd, 'yy/mm/dd'),'yyyy-fmmm-dd') ymd from (
+select to_date((select chkin from reservation where resno=#{res} and hno=#{hno}),'yyyy-mm-dd') +(LEVEL - 1) ymd
+from dual
+connect by to_date((select chkin from reservation where resno=#{res} and hno=#{hno}),'yyyy-mm-dd')+(LEVEL - 1) < to_date
+((select chkout from reservation where resno=#{res} and hno=#{hno}),'yyyy-mm-dd'))
+   ]]>
+	</select>
+
+	<select id="halist" resultType="rtvo" parameterType="int">
+ 	<![CDATA[
+ 		select us.email,us.pnum, rs.resno,rs.chkin , rs.chkout ,rs.pernum, rs.rprice ,rs.resdate  
+ 		from reservation rs join host hs on rs.hno=hs.hno join uuser us on rs.uno=us.no where rs.hno=#{hno} and chkout>sysdate order by chkin asc
+ 		]]>
+	</select>
+
+	<select id="hblist" resultType="rtvo" parameterType="int">
+ 	<![CDATA[
+ 		select us.email,us.pnum, rs.resno,rs.chkin , rs.chkout ,rs.pernum, rs.rprice ,rs.resdate  
+ 		from reservation rs join host hs on rs.hno=hs.hno join uuser us on rs.uno=us.no where rs.hno=#{hno} and chkout<sysdate order by chkin asc
+ 		]]>
+	</select>
+
+	<select id="mblist" resultType="rtvo" parameterType="int">
+	 <![CDATA[
+ 		select  r.resno, r.chkin , r.chkout ,r.pernum, r.rprice ,r.resdate,h.hname,h.haddressdo  
+ 		from reservation r join host h on r.hno=h.hno join uuser u on r.uno=u.no where uno=#{uno} and chkout>sysdate order by chkin asc
+ 		]]>
+	</select>
+
+	<select id="malist" resultType="rtvo" parameterType="int">
+	 <![CDATA[
+ 		select  r.resno, r.chkin , r.chkout ,r.pernum, r.rprice ,r.resdate,h.hname,h.haddressdo, h.hno  
+ 		from reservation r join host h on r.hno=h.hno join uuser u on r.uno=u.no where uno=#{uno} and chkout<sysdate order by chkin asc
+		]]>
+	</select>
+
+	<select id="receipe" resultType="rtvo" parameterType="int">
+		select
+		u.name, r.resno, r.chkin , r.chkout ,r.pernum, r.rprice
+		,r.resdate,h.hname,h.haddressdo ,h.haddress
+		from reservation r join
+		host h on r.hno=h.hno join uuser u on r.uno=u.no
+		where resno=#{resno}
+	</select>
+
+	<select id="alist" resultType="rtvo" parameterType="pvo">
+
+		select * from
+		(
+		select rownum r_num, a.* from
+		(select r.resno, r.chkin , r.chkout
+		,r.pernum, r.rprice
+		,r.resdate,h.hname,h.haddressdo ,h.hno
+		from
+		reservation r join host h on r.hno=h.hno join uuser u on r.uno=u.no
+		where uno=#{uno} and chkout > sysdate order by chkin asc) a
+		) where
+		r_num between #{start} and #{end}
+
+	</select>
+
+	<select id="blist" resultType="rtvo" parameterType="pvo">   
+
+   <![CDATA[
+   
+   select * from (
+   select rownum r_num, a.* from
+   (select  r.resno, r.chkin , r.chkout ,r.pernum, r.rprice ,r.resdate,h.hname,h.haddressdo  ,h.hno
+from reservation r join host h on r.hno=h.hno join uuser u on r.uno=u.no where uno=#{uno} and chkout < sysdate order by chkin asc) a
+   ) where r_num between #{start} and #{end}
+   ]]>
+
+	</select>
+
+	<select id="atotalCnt" resultType="int">
+   <![CDATA[
+       select count(*) cnt from reservation where  uno=#{uno} and chkout > sysdate
+      ]]>
+	</select>
+
+	<select id="btotalCnt" resultType="int">
+   
+   <![CDATA[
+       select count(*) cnt from reservation where  uno=#{uno} and chkout < sysdate
+      ]]>
+
+	</select>
+
+	<insert id="addReserAop">
+		INSERT INTO aop(aopno, hno, uno,resno,
+		uaddressdo,resdate,resprice)
+		SELECT AOP_SEQ.nextVal, rs.hno, rs.uno,
+		rs.resno, u.addressdo, rs.resdate,
+		rs.rprice FROM reservation rs, uuser
+		u
+		where rs.resno=(SELECT * FROM(SELECT resno FROM reservation ORDER BY
+		ROWNUM
+		DESC) WHERE ROWNUM = 1) and u.no=rs.uno
+	</insert>
+
+	<select id="selectReserAop" parameterType="aopvo"
+		resultType="aopvo">
+		select hno, uno, resno, uaddressdo, resdate, resprice from
+		aop where hno=${hno} and resdate between to_date('${searchIn}',
+		'yyyy-mm-dd') and to_date('${searchOut}', 'yyyy-mm-dd')
+	</select>
+
+	<select id="selectReserData" parameterType="aopvo"
+		resultType="rtvo">
+		select us.email,us.pnum, rs.resno,rs.chkin , rs.chkout
+		,rs.pernum, rs.rprice ,rs.resdate
+		from reservation rs join host hs on
+		rs.hno=hs.hno join uuser us on
+		rs.uno=us.no where rs.hno=${hno} and
+		rs.resdate between
+		to_date('${searchIn}','yyyy-mm-dd') and
+		to_date('${searchOut}',
+		'yyyy-mm-dd')
+	</select>
+
+	<select id="selectLocationRes" parameterType="aopvo"
+		resultType="rtvo">
+		select us.email,us.pnum, rs.resno,rs.chkin , rs.chkout
+		,rs.pernum, rs.rprice ,rs.resdate
+		from reservation rs join host hs on
+		rs.hno=hs.hno join uuser us on
+		rs.uno=us.no where rs.hno=${hno} and
+		rs.resdate between
+		to_date('${searchIn}','yyyy-mm-dd') and
+		to_date('${searchOut}',
+		'yyyy-mm-dd')
+	</select>
+
+
+</mapper>
